@@ -20,16 +20,22 @@
   },
   "homepage": "https://github.com/AAYUSKARKI/Multi-Tenant-Inventory-SaaS-Server#readme",
   "dependencies": {
+    "@prisma/adapter-pg": "^7.0.1",
+    "@prisma/client": "^7.0.1",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
-    "helmet": "^8.1.0"
+    "helmet": "^8.1.0",
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "@tsconfig/node22": "^22.0.5",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^24.10.1",
+    "@types/pg": "^8.15.6",
     "prettier": "^3.7.3",
+    "prisma": "^7.0.1",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   }
