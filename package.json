@@ -1,0 +1,36 @@
+{
+  "name": "multi-tenant-inventory-saas-server",
+  "version": "1.0.0",
+  "description": "A production-ready, high-performance, multi-tenant inventory management",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --import=tsx --env-file=.env --watch src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AAYUSKARKI/Multi-Tenant-Inventory-SaaS-Server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/AAYUSKARKI/Multi-Tenant-Inventory-SaaS-Server/issues"
+  },
+  "homepage": "https://github.com/AAYUSKARKI/Multi-Tenant-Inventory-SaaS-Server#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0"
+  },
+  "devDependencies": {
+    "@tsconfig/node22": "^22.0.5",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^24.10.1",
+    "prettier": "^3.7.3",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
