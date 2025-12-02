@@ -1,0 +1,20 @@
+# Base image
+FROM node:18
+
+# Set working directory
+WORKDIR /app
+
+# Copy only package files for caching
+COPY package*.json ./
+
+# Install all dependencies
+RUN npm install
+
+# Copy the rest of the project
+COPY . .
+
+# Expose the application port
+EXPOSE 5000
+
+# Start development server on port 5000
+CMD ["npm", "run", "dev"]
