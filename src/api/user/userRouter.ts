@@ -2,7 +2,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { z } from "zod";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { UserResponseSchema, CreateUserSchema, UserSchema } from "./userModel";
+import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema } from "./userModel";
 import { userController } from "./userController";
 import { StatusCodes } from "http-status-codes";
 
@@ -37,3 +37,24 @@ userRegistry.registerPath({
 });
 
 userRouter.post("/user", userController.createUser);
+
+userRegistry.registerPath({
+    method: "post",
+    path: "/api/user/login",
+    summary: "Log in a user",
+    tags: ["User"],
+    request: {
+        body: {
+            description: "User object that needs to be logged in",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: LoginUserSchema,
+                },
+            },
+        },
+    },
+    responses: createApiResponse(LoginResponseSchema, "User logged in successfully", StatusCodes.OK),
+});
+
+userRouter.post("/user/login", userController.loginUser);
