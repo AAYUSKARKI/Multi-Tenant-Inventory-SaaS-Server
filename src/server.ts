@@ -3,6 +3,7 @@ import cors from "cors";
 import helmet from "helmet";
 import http from "http";
 import { tenantRouter } from "./api/tenant/tenantRouter";
+import { userRouter } from "./api/user/userRouter";
 import { openAPIRouter } from "./api-docs/openAPIRouter";
 import errorHandler from "./common/middleware/errorHandler";
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use("/api", tenantRouter);
+app.use("/api", userRouter);
 
 //swagger docs
 app.use(openAPIRouter);
