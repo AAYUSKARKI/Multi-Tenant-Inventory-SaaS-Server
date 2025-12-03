@@ -58,3 +58,14 @@ userRegistry.registerPath({
 });
 
 userRouter.post("/user/login", userController.loginUser);
+
+userRegistry.registerPath({
+    method: "get",
+    path: "/api/user",
+    summary: "Get all users",
+    tags: ["User"],
+    responses: createApiResponse(UserResponseSchema.array(), "Users retrieved successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.get("/user", userController.getUsers);
