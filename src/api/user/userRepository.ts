@@ -10,4 +10,8 @@ export class UserRepository {
     async create(data: CreateUser): Promise<User> {
         return prisma.user.create({ data }); 
     }
+
+    async findAll(): Promise<User[]> {
+        return prisma.user.findMany(); 
+    }
 }
