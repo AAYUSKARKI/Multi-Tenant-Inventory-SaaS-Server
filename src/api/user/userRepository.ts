@@ -15,7 +15,11 @@ export class UserRepository {
         return prisma.user.create({ data }); 
     }
 
-    async findAll(): Promise<User[]> {
-        return prisma.user.findMany(); 
+    async findAll(tenantId: string): Promise<User[]> {
+        return prisma.user.findMany({
+            where: {
+                tenantId
+            }
+        }); 
     }
 }

@@ -75,9 +75,9 @@ export class UserService {
         }
     }
 
-    async getUsers(): Promise<ServiceResponse<UserResponse[]>> {
+    async getUsers(tenantId: string): Promise<ServiceResponse<UserResponse[]>> {
         try {
-            const users = await this.userRepository.findAll();
+            const users = await this.userRepository.findAll(tenantId);
             const userResponses: UserResponse[] = users.map(user => ({
                 id: user.id,
                 tenantId: user.tenantId,

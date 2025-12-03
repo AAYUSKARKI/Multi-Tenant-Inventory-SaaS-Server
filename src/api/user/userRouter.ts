@@ -1,6 +1,6 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
-import { z } from "zod";
+import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema } from "./userModel";
 import { userController } from "./userController";
@@ -68,4 +68,4 @@ userRegistry.registerPath({
     security: [{ bearerAuth: [] }],
 });
 
-userRouter.get("/user", userController.getUsers);
+userRouter.get("/user", verifyJWT, userController.getUsers);
