@@ -15,6 +15,11 @@ class UserController {
         const serviceResponse: ServiceResponse<UserResponse | null> = await userService.loginUser(data);
         return handleServiceResponse(serviceResponse, res);
     };
+
+    public getUsers: RequestHandler = async (req: Request, res: Response) => {
+        const serviceResponse: ServiceResponse<UserResponse[]> = await userService.getUsers();
+        return handleServiceResponse(serviceResponse, res);
+    };
 }
 
 export const userController = new UserController();
