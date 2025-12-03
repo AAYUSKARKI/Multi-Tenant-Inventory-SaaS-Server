@@ -1,9 +1,11 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 import { tenantRegistry } from "@/api/tenant/tenantRouter";
+import { userRegistry } from "@/api/user/userRouter";
+import { itemRegistry } from "@/api/item/itemRouter";
 export type OpenAPIDocument = ReturnType<OpenApiGeneratorV3["generateDocument"]>;
 
 export function generateOpenAPIDocument(): OpenAPIDocument {
-	const registry = new OpenAPIRegistry([tenantRegistry]);
+	const registry = new OpenAPIRegistry([tenantRegistry, userRegistry, itemRegistry]);
 	const generator = new OpenApiGeneratorV3(registry.definitions);
 
 	return generator.generateDocument({
