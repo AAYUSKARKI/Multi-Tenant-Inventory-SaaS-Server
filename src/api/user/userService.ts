@@ -1,8 +1,9 @@
 import { StatusCodes } from "http-status-codes";
-import type { User, CreateUser, UserResponse } from "./userModel";
+import type { LoginUser, CreateUser, UserResponse, LoginResponse } from "./userModel";
 import { UserRepository } from "./userRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 import { ServiceResponse } from "@/common/utils/serviceResponse";
 
 export class UserService {
@@ -42,6 +43,35 @@ export class UserService {
         } catch (error) {
             console.error("Error creating user:", error);
             return ServiceResponse.failure("Failed to create user", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async loginUser(data: LoginUser): Promise<ServiceResponse<LoginResponse | null>> {
+        try {
+            const user = await this.userRepository.findByEmail(data.email);
+            if (!user) {
+                return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
+            }
+            const isPasswordValid = await bcrypt.compare(data.password, user.password);
+            if (!isPasswordValid) {
+                return ServiceResponse.failure("Invalid password", null, StatusCodes.UNAUTHORIZED);
+            }
+
+            const token = jwt.sign({ userId: user.id, tenantId: user.tenantId }, process.env.JWT_SECRET as string, { expiresIn: "1h" });
+            const loginResponse: LoginResponse = {
+                token,
+                id: user.id,
+                tenantId: user.tenantId,
+                email: user.email,
+                fullName: user.fullName,
+                role: user.role,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
+            return ServiceResponse.success("User logged in successfully", loginResponse, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error logging in user:", error);
+            return ServiceResponse.failure("Failed to log in user", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }
