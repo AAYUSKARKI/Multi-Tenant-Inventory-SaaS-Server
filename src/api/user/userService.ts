@@ -74,6 +74,25 @@ export class UserService {
             return ServiceResponse.failure("Failed to log in user", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async getUsers(): Promise<ServiceResponse<UserResponse[]>> {
+        try {
+            const users = await this.userRepository.findAll();
+            const userResponses: UserResponse[] = users.map(user => ({
+                id: user.id,
+                tenantId: user.tenantId,
+                email: user.email,
+                fullName: user.fullName,
+                role: user.role,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }));
+            return ServiceResponse.success("Users retrieved successfully", userResponses, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving users:", error);
+            return ServiceResponse.failure("Failed to retrieve users", [], StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export const userService = new UserService();
