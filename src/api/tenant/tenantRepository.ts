@@ -7,4 +7,10 @@ export class TenantRepository {
             data,
         });
     }
+
+    async findByName(name: string): Promise<Tenant | null> {
+        return await prisma.tenant.findUnique({
+            where: { name },
+        });
+    }
 }

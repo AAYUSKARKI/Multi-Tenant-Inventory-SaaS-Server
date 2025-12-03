@@ -12,6 +12,10 @@ export class TenantService {
 
     async createTenant(data: CreateTenant): Promise<ServiceResponse<Tenant | null>> {
         try {
+            const tenantExists = await this.tenantRepository.findByName(data.name);
+            if (tenantExists) {
+                return ServiceResponse.failure("Tenant with this name already exists", null, StatusCodes.CONFLICT);
+            }
             const tenant = await this.tenantRepository.create(data);
             return ServiceResponse.success("Tenant created successfully", tenant, StatusCodes.CREATED);
         }
