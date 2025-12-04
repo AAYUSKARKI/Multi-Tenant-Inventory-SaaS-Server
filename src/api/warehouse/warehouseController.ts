@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from "express";
-import { CreateWarehouseSchema, WarehouseResponse, type Warehouse } from "./warehouseModel";
+import { CreateWarehouseSchema, UpdateWarehouseSchema, WarehouseResponse, type Warehouse } from "./warehouseModel";
 import { warehouseService } from "./warehouseService";
 import { ServiceResponse, handleServiceResponse } from "@/common/utils/serviceResponse";
 import { StatusCodes } from "http-status-codes";
@@ -37,6 +37,31 @@ class WarehouseController {
         }
         const warehouseId = req.params.id;
         const serviceResponse: ServiceResponse<Warehouse | null> = await warehouseService.getWarehouseById(warehouseId, req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    };
+
+    public updateWarehouse: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const warehouseId = req.params.id;
+        const data = UpdateWarehouseSchema.parse(req.body);
+        const serviceResponse: ServiceResponse<Warehouse | null> = await warehouseService.updateWarehouse(warehouseId, data, req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    };
+
+    public deleteWarehouse: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const warehouseId = req.params.id;
+        const serviceResponse: ServiceResponse<null> = await warehouseService.deleteWarehouse(warehouseId, req.user.tenantId);
         return handleServiceResponse(serviceResponse, res);
     };
 }
