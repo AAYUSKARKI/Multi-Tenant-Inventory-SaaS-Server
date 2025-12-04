@@ -1,5 +1,5 @@
 import { prisma } from "@/common/lib/prisma";
-import type { CreateItem, Item } from "./itemModel";
+import type { CreateItem, Item, UpdateItem } from "./itemModel";
 
 export class ItemRepository {
     async create(data: CreateItem,tenantId: string): Promise<Item> {
@@ -19,4 +19,21 @@ export class ItemRepository {
         return item;
     }
     
+    async findManyByTenant(tenantId: string): Promise<Item[]> {
+        const items = await prisma.item.findMany({ where: { tenantId: tenantId } });
+        return items;
+    }
+
+    async update(itemId: string, data: UpdateItem, tenantId: string): Promise<Item> {
+        const item = await prisma.item.update({
+            where: { id: itemId, tenantId: tenantId },
+            data: data,
+        });
+        return item;
+    }
+
+    async delete(itemId: string, tenantId: string): Promise<void> {
+        await prisma.item.deleteMany({ where: { id: itemId, tenantId: tenantId } });
+    }
+
 }
