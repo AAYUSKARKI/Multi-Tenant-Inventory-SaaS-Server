@@ -60,6 +60,24 @@ export class WarehouseService {
             return ServiceResponse.failure<Warehouse | null>("Failed to retrieve warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async updateWarehouse(warehouseId: string, data: CreateWarehouse, tenantId: string): Promise<ServiceResponse<Warehouse | null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const warehouse = await this.warehouseRepository.findByIdAndTenant(warehouseId, tenantId);
+            if (!warehouse) {
+                return ServiceResponse.failure("Warehouse not found", null, StatusCodes.NOT_FOUND);
+            }
+            const updatedWarehouse = await this.warehouseRepository.update(warehouseId, data, tenantId);
+            return ServiceResponse.success<Warehouse>("Warehouse updated successfully", updatedWarehouse, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error updating warehouse:", error);
+            return ServiceResponse.failure<Warehouse | null>("Failed to update warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export const warehouseService = new WarehouseService();
