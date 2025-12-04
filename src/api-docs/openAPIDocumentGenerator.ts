@@ -3,11 +3,12 @@ import { tenantRegistry } from "@/api/tenant/tenantRouter";
 import { userRegistry } from "@/api/user/userRouter";
 import { itemRegistry } from "@/api/item/itemRouter";
 import { warehouseRegistry } from "@/api/warehouse/warehouseRouter";
+import { stockRegistry } from "@/api/stock/stockRouter";
 
 export type OpenAPIDocument = ReturnType<OpenApiGeneratorV3["generateDocument"]>;
 
 export function generateOpenAPIDocument(): OpenAPIDocument {
-	const registry = new OpenAPIRegistry([tenantRegistry, userRegistry, itemRegistry, warehouseRegistry]);
+	const registry = new OpenAPIRegistry([tenantRegistry, userRegistry, itemRegistry, warehouseRegistry, stockRegistry]);
 	const generator = new OpenApiGeneratorV3(registry.definitions);
 
 	return generator.generateDocument({
