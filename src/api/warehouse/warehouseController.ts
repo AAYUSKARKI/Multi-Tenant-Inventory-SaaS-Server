@@ -16,6 +16,29 @@ class WarehouseController {
         const serviceResponse: ServiceResponse<WarehouseResponse | null> = await warehouseService.createWarehouse(data, req.user.tenantId);
         return handleServiceResponse(serviceResponse, res);
     };
+
+    public getWarehouses: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const serviceResponse: ServiceResponse<Warehouse[]> = await warehouseService.getWarehouses(req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    }; 
+
+    public getWarehouseById: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const warehouseId = req.params.id;
+        const serviceResponse: ServiceResponse<Warehouse | null> = await warehouseService.getWarehouseById(warehouseId, req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    };
 }
 
 export const warehouseController = new WarehouseController();

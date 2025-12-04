@@ -38,3 +38,14 @@ warehouseRegistry.registerPath({
 });
 
 warehouseRouter.post("/warehouse", verifyJWT, warehouseController.createWarehouse);
+
+warehouseRegistry.registerPath({
+    method: "get",
+    path: "/api/warehouse",
+    summary: "Get all warehouses",
+    tags: ["Warehouse"],
+    responses: createApiResponse(WarehouseResponseSchema.array(), "Warehouses retrieved successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.get("/warehouse", verifyJWT, warehouseController.getWarehouses);
