@@ -13,5 +13,10 @@ export class ItemRepository {
         const item = await prisma.item.findFirst({ where: { name: name, tenantId: tenantId } });
         return item;
     }
+
+    async findByIdAndTenant(itemId: string, tenantId: string): Promise<Item | null> {
+        const item = await prisma.item.findFirst({ where: { id: itemId, tenantId: tenantId } });
+        return item;
+    }
     
 }
