@@ -1,4 +1,4 @@
-import type { CreateWarehouse,Warehouse,WarehouseResponse } from "./warehouseModel";
+import type { CreateWarehouse,UpdateWarehouse,Warehouse,WarehouseResponse } from "./warehouseModel";
 import { WarehouseRepository } from "./warehouseRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import { ServiceResponse } from "@/common/utils/serviceResponse";
@@ -61,7 +61,7 @@ export class WarehouseService {
         }
     }
 
-    async updateWarehouse(warehouseId: string, data: CreateWarehouse, tenantId: string): Promise<ServiceResponse<Warehouse | null>> {
+    async updateWarehouse(warehouseId: string, data: UpdateWarehouse, tenantId: string): Promise<ServiceResponse<Warehouse | null>> {
         try {
             const tenant = await this.tenantRepository.findById(tenantId);
             if (!tenant) {

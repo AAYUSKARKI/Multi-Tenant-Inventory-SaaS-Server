@@ -3,7 +3,7 @@ import { Router } from "express";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { warehouseController } from "./warehouseController";
-import { CreateWarehouseSchema, WarehouseResponseSchema, WarehouseSchema, UpdateWarehouseSchema } from "./warehouseModel";
+import { CreateWarehouseSchema,UpdateWarehouseSchema, WarehouseResponseSchema, WarehouseSchema } from "./warehouseModel";
 import { StatusCodes } from "http-status-codes";
 
 export const warehouseRegistry = new OpenAPIRegistry();
@@ -71,7 +71,7 @@ warehouseRegistry.registerPath({
 });
 
 warehouseRouter.get("/warehouse/:id", verifyJWT, warehouseController.getWarehouseById);
-    
+
 warehouseRegistry.registerPath({
     method: "put",
     path: "/api/warehouse/{id}",
@@ -86,8 +86,8 @@ warehouseRegistry.registerPath({
             schema: {
                 type: "string",
             },
-        },
-    ],
+        },        
+    ],  
     request: {
         body: {
             description: "Warehouse object that needs to be updated",
@@ -103,7 +103,7 @@ warehouseRegistry.registerPath({
     security: [{ bearerAuth: [] }],
 });
 
-warehouseRouter.put("/warehouse/:id", verifyJWT, warehouseController.updateWarehouse);  
+warehouseRouter.put("/warehouse/:id", verifyJWT, warehouseController.updateWarehouse);
 
 warehouseRegistry.registerPath({
     method: "delete",
