@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from "express";
-import { CreateUserSchema, UserResponse, LoginUserSchema } from "./userModel";
+import { CreateUserSchema,UpdateUserSchema, UserResponse, LoginUserSchema } from "./userModel";
 import { userService } from "./userService";
 import { ServiceResponse, handleServiceResponse } from "@/common/utils/serviceResponse";
 import { StatusCodes } from "http-status-codes";
@@ -25,6 +25,43 @@ class UserController {
             );
         }
         const serviceResponse: ServiceResponse<UserResponse[]> = await userService.getUsers(req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    };
+
+    public getUserById: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const userId = req.params.id;
+        const serviceResponse: ServiceResponse<UserResponse | null> = await userService.getUserById(userId, req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    };
+
+    public updateUser: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const userId = req.params.id;
+        const data = UpdateUserSchema.parse(req.body);
+        const serviceResponse: ServiceResponse<UserResponse | null> = await userService.updateUser(data, req.user.tenantId, userId);
+        return handleServiceResponse(serviceResponse, res);
+    };
+
+    public deleteUser: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const userId = req.params.id;
+        const serviceResponse: ServiceResponse<null> = await userService.deleteUser(userId, req.user.tenantId);
         return handleServiceResponse(serviceResponse, res);
     };
 }
