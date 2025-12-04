@@ -1,0 +1,34 @@
+import type { CreateWarehouse,Warehouse,WarehouseResponse } from "./warehouseModel";
+import { WarehouseRepository } from "./warehouseRepository";
+import { TenantRepository } from "../tenant/tenantRepository";
+import { ServiceResponse } from "@/common/utils/serviceResponse";
+import { StatusCodes } from "http-status-codes";
+
+export class WarehouseService {
+    private warehouseRepository: WarehouseRepository;
+    private tenantRepository: TenantRepository;
+
+    constructor(
+        warehouseRepository: WarehouseRepository = new WarehouseRepository(),
+        tenantRepository: TenantRepository = new TenantRepository()
+    ) {
+        this.warehouseRepository = warehouseRepository;
+        this.tenantRepository = tenantRepository;
+    }
+
+    async createWarehouse(data: CreateWarehouse, tenantId: string): Promise<ServiceResponse<WarehouseResponse | null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const warehouse = await this.warehouseRepository.create(data, tenantId);
+            return ServiceResponse.success<WarehouseResponse>("Warehouse created successfully", warehouse, StatusCodes.CREATED);
+        } catch (error) {
+            console.error("Error creating warehouse:", error);
+            return ServiceResponse.failure<null>("Failed to create warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+}
+
+export const warehouseService = new WarehouseService();
