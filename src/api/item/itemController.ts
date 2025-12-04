@@ -4,7 +4,7 @@ import { itemService } from "./itemService";
 import { ServiceResponse, handleServiceResponse } from "@/common/utils/serviceResponse";
 import { StatusCodes } from "http-status-codes";
 
-class UserController {
+class ItemController {
     public createItem: RequestHandler = async (req: Request, res: Response) => {
         if (!req.user?.tenantId) {
             return handleServiceResponse(
@@ -65,4 +65,4 @@ class UserController {
     };
 }
 
-export const itemController = new UserController();
+export const itemController = new ItemController();
