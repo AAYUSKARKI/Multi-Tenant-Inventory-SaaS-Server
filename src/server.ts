@@ -8,6 +8,7 @@ import { openAPIRouter } from "./api-docs/openAPIRouter";
 import errorHandler from "./common/middleware/errorHandler";
 import { itemRouter } from "./api/item/itemRouter";
 import { warehouseRouter } from "./api/warehouse/warehouseRouter";
+import { stockRouter } from "./api/stock/stockRouter";
 
 const app: Express = express();
 const server = http.createServer(app);
@@ -26,6 +27,8 @@ app.use("/api", tenantRouter);
 app.use("/api", userRouter);
 app.use("/api",itemRouter);
 app.use("/api",warehouseRouter);
+app.use("/api",stockRouter);
+
 
 //swagger docs
 app.use(openAPIRouter);
