@@ -72,3 +72,35 @@ warehouseRegistry.registerPath({
 
 warehouseRouter.get("/warehouse/:id", verifyJWT, warehouseController.getWarehouseById);
     
+warehouseRegistry.registerPath({
+    method: "put",
+    path: "/api/warehouse/{id}",
+    summary: "Update a warehouse by ID",
+    tags: ["Warehouse"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the warehouse to update",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    request: {
+        body: {
+            description: "Warehouse object that needs to be updated",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: UpdateWarehouseSchema,
+                },
+            },
+        },
+    },
+    responses: createApiResponse(WarehouseResponseSchema, "Warehouse updated successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.put("/warehouse/:id", verifyJWT, warehouseController.updateWarehouse);  
