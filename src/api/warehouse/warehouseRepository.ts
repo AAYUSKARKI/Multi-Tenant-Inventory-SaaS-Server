@@ -24,4 +24,14 @@ export class WarehouseRepository {
             },
         });
     }
+
+    async update(warehouseId: string, data: CreateWarehouse, tenantId: string): Promise<Warehouse> {
+        return prisma.warehouse.update({
+            where: {
+                id: warehouseId,
+                tenantId: tenantId,
+            },
+            data: data,
+        });
+    }
 }
