@@ -52,6 +52,18 @@ class WarehouseController {
         const serviceResponse: ServiceResponse<Warehouse | null> = await warehouseService.updateWarehouse(warehouseId, data, req.user.tenantId);
         return handleServiceResponse(serviceResponse, res);
     };
+
+    public deleteWarehouse: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const warehouseId = req.params.id;
+        const serviceResponse: ServiceResponse<null> = await warehouseService.deleteWarehouse(warehouseId, req.user.tenantId);
+        return handleServiceResponse(serviceResponse, res);
+    };
 }
 
 export const warehouseController = new WarehouseController();

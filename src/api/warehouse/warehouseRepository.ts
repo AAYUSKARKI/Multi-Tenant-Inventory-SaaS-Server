@@ -34,4 +34,13 @@ export class WarehouseRepository {
             data: data,
         });
     }
+
+    async delete(warehouseId: string, tenantId: string): Promise<void> {
+        await prisma.warehouse.delete({
+            where: {
+                id: warehouseId,
+                tenantId: tenantId,
+            },
+        });
+    }
 }

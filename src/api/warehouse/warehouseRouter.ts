@@ -104,3 +104,25 @@ warehouseRegistry.registerPath({
 });
 
 warehouseRouter.put("/warehouse/:id", verifyJWT, warehouseController.updateWarehouse);  
+
+warehouseRegistry.registerPath({
+    method: "delete",
+    path: "/api/warehouse/{id}",
+    summary: "Delete a warehouse by ID",
+    tags: ["Warehouse"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the warehouse to delete",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    responses: createApiResponse(WarehouseResponseSchema, "Warehouse deleted successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.delete("/warehouse/:id", verifyJWT, warehouseController.deleteWarehouse);
