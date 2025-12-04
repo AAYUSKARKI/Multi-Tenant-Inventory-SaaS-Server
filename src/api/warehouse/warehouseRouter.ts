@@ -3,7 +3,7 @@ import { Router } from "express";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { warehouseController } from "./warehouseController";
-import { CreateWarehouseSchema, WarehouseResponseSchema, WarehouseSchema } from "./warehouseModel";
+import { CreateWarehouseSchema, WarehouseResponseSchema, WarehouseSchema, UpdateWarehouseSchema } from "./warehouseModel";
 import { StatusCodes } from "http-status-codes";
 
 export const warehouseRegistry = new OpenAPIRegistry();
@@ -49,3 +49,26 @@ warehouseRegistry.registerPath({
 });
 
 warehouseRouter.get("/warehouse", verifyJWT, warehouseController.getWarehouses);
+
+warehouseRegistry.registerPath({
+    method: "get",
+    path: "/api/warehouse/{id}",
+    summary: "Get a warehouse by ID",
+    tags: ["Warehouse"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the warehouse to retrieve",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    responses: createApiResponse(WarehouseResponseSchema, "Warehouse retrieved successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.get("/warehouse/:id", verifyJWT, warehouseController.getWarehouseById);
+    
