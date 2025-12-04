@@ -16,4 +16,12 @@ export class WarehouseRepository {
             },
         });
     }
+
+    async findManyByTenant(tenantId: string): Promise<Warehouse[]> {
+        return prisma.warehouse.findMany({
+            where: {
+                tenantId: tenantId,
+            },
+        });
+    }
 }

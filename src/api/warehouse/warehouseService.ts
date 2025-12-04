@@ -29,6 +29,20 @@ export class WarehouseService {
             return ServiceResponse.failure<null>("Failed to create warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
+
+    async getWarehouses(tenantId: string): Promise<ServiceResponse<Warehouse[]>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", [], StatusCodes.NOT_FOUND);
+            }
+            const warehouses = await this.warehouseRepository.findManyByTenant(tenantId);
+            return ServiceResponse.success<Warehouse[]>("Warehouses retrieved successfully", warehouses, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving warehouses:", error);
+            return ServiceResponse.failure<Warehouse[]>("Failed to retrieve warehouses", [], StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
 
 export const warehouseService = new WarehouseService();
