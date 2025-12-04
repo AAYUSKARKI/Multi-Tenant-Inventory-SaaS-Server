@@ -7,4 +7,21 @@ export class WarehouseRepository {
             data: { ...data, tenantId: tenantId },
         });
     }
+
+    async findByIdAndTenant(warehouseId: string, tenantId: string): Promise<Warehouse | null> {
+        return prisma.warehouse.findFirst({
+            where: {
+                id: warehouseId,
+                tenantId: tenantId,
+            },
+        });
+    }
+
+    async findManyByTenant(tenantId: string): Promise<Warehouse[]> {
+        return prisma.warehouse.findMany({
+            where: {
+                tenantId: tenantId,
+            },
+        });
+    }
 }
