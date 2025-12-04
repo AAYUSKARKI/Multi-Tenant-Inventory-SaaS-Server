@@ -2,7 +2,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema } from "./userModel";
+import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema, UpdateUserSchema } from "./userModel";
 import { userController } from "./userController";
 import { StatusCodes } from "http-status-codes";
 
@@ -69,3 +69,80 @@ userRegistry.registerPath({
 });
 
 userRouter.get("/user", verifyJWT, userController.getUsers);
+
+userRegistry.registerPath({
+    method: "get",
+    path: "/api/user/{id}",
+    summary: "Get a user by ID",
+    tags: ["User"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the user to retrieve",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    responses: createApiResponse(UserResponseSchema, "User retrieved successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.get("/user/:id", verifyJWT, userController.getUserById);
+
+userRegistry.registerPath({
+    method: "put",
+    path: "/api/user/{id}",
+    summary: "Update a user by ID",
+    tags: ["User"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the user to update",            
+            schema: {
+                type: "string",
+            },
+        },        
+    ],  
+    request: {
+        body: {
+            description: "User object that needs to be updated",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: UpdateUserSchema,
+                },
+            },
+        },
+    },
+    responses: createApiResponse(UserResponseSchema, "User updated successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.put("/user/:id", verifyJWT, userController.updateUser);
+
+userRegistry.registerPath({
+    method: "delete",
+    path: "/api/user/{id}",
+    summary: "Delete a user by ID",
+    tags: ["User"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the user to delete",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    responses: createApiResponse(UserResponseSchema, "User deleted successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.delete("/user/:id", verifyJWT, userController.deleteUser);

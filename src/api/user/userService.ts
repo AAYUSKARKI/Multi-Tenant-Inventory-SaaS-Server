@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import type { LoginUser, CreateUser, UserResponse, LoginResponse } from "./userModel";
+import type { LoginUser,UpdateUser, CreateUser, UserResponse, LoginResponse } from "./userModel";
 import { UserRepository } from "./userRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import bcrypt from "bcrypt";
@@ -91,6 +91,65 @@ export class UserService {
         } catch (error) {
             console.error("Error retrieving users:", error);
             return ServiceResponse.failure("Failed to retrieve users", [], StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getUserById(userId: string, tenantId: string): Promise<ServiceResponse<UserResponse | null>> {
+        try {
+            const user = await this.userRepository.findByIdAndTenant(userId, tenantId);
+            if (!user) {
+                return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
+            }
+            const userResponse: UserResponse = {
+                id: user.id,
+                tenantId: user.tenantId,
+                email: user.email,
+                fullName: user.fullName,
+                role: user.role,
+                createdAt: user.createdAt,
+                updatedAt: user.updatedAt
+            }
+            return ServiceResponse.success<UserResponse>("User retrieved successfully", userResponse, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving user:", error);
+            return ServiceResponse.failure<null>("Failed to retrieve user", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async updateUser(data: UpdateUser, tenantId: string, userId: string): Promise<ServiceResponse<UserResponse | null>> {
+        try {
+            const user = await this.userRepository.findByIdAndTenant(userId, tenantId);
+            if (!user) {
+                return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
+            }
+            const updatedUser = await this.userRepository.update(userId, data, tenantId);
+            const userResponse: UserResponse = {
+                id: updatedUser.id,
+                tenantId: updatedUser.tenantId,
+                email: updatedUser.email,
+                fullName: updatedUser.fullName,
+                role: updatedUser.role,
+                createdAt: updatedUser.createdAt,
+                updatedAt: updatedUser.updatedAt
+            }
+            return ServiceResponse.success<UserResponse>("User updated successfully", userResponse, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error updating user:", error);
+            return ServiceResponse.failure<null>("Failed to update user", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async deleteUser(userId: string, tenantId: string): Promise<ServiceResponse<null>> {
+        try {
+            const user = await this.userRepository.findByIdAndTenant(userId, tenantId);  
+            if (!user) {
+                return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
+            }
+            await this.userRepository.delete(userId, tenantId);
+            return ServiceResponse.success<null>("User deleted successfully", null, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error deleting user:", error);
+            return ServiceResponse.failure<null>("Failed to delete user", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }
