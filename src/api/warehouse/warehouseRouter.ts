@@ -3,7 +3,7 @@ import { Router } from "express";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { warehouseController } from "./warehouseController";
-import { CreateWarehouseSchema, WarehouseResponseSchema, WarehouseSchema } from "./warehouseModel";
+import { CreateWarehouseSchema,UpdateWarehouseSchema, WarehouseResponseSchema, WarehouseSchema } from "./warehouseModel";
 import { StatusCodes } from "http-status-codes";
 
 export const warehouseRegistry = new OpenAPIRegistry();
@@ -49,3 +49,80 @@ warehouseRegistry.registerPath({
 });
 
 warehouseRouter.get("/warehouse", verifyJWT, warehouseController.getWarehouses);
+
+warehouseRegistry.registerPath({
+    method: "get",
+    path: "/api/warehouse/{id}",
+    summary: "Get a warehouse by ID",
+    tags: ["Warehouse"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the warehouse to retrieve",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    responses: createApiResponse(WarehouseResponseSchema, "Warehouse retrieved successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.get("/warehouse/:id", verifyJWT, warehouseController.getWarehouseById);
+
+warehouseRegistry.registerPath({
+    method: "put",
+    path: "/api/warehouse/{id}",
+    summary: "Update a warehouse by ID",
+    tags: ["Warehouse"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the warehouse to update",            
+            schema: {
+                type: "string",
+            },
+        },        
+    ],  
+    request: {
+        body: {
+            description: "Warehouse object that needs to be updated",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: UpdateWarehouseSchema,
+                },
+            },
+        },
+    },
+    responses: createApiResponse(WarehouseResponseSchema, "Warehouse updated successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.put("/warehouse/:id", verifyJWT, warehouseController.updateWarehouse);
+
+warehouseRegistry.registerPath({
+    method: "delete",
+    path: "/api/warehouse/{id}",
+    summary: "Delete a warehouse by ID",
+    tags: ["Warehouse"],
+    parameters: [
+        {
+            name: "id",
+            in: "path",
+            required: true,
+            description: "ID of the warehouse to delete",            
+            schema: {
+                type: "string",
+            },
+        },
+    ],
+    responses: createApiResponse(WarehouseResponseSchema, "Warehouse deleted successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+warehouseRouter.delete("/warehouse/:id", verifyJWT, warehouseController.deleteWarehouse);

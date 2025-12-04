@@ -1,4 +1,4 @@
-import type { CreateWarehouse,Warehouse,WarehouseResponse } from "./warehouseModel";
+import type { CreateWarehouse,UpdateWarehouse,Warehouse,WarehouseResponse } from "./warehouseModel";
 import { WarehouseRepository } from "./warehouseRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import { ServiceResponse } from "@/common/utils/serviceResponse";
@@ -58,6 +58,42 @@ export class WarehouseService {
         } catch (error) {
             console.error("Error retrieving warehouse:", error);
             return ServiceResponse.failure<Warehouse | null>("Failed to retrieve warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async updateWarehouse(warehouseId: string, data: UpdateWarehouse, tenantId: string): Promise<ServiceResponse<Warehouse | null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const warehouse = await this.warehouseRepository.findByIdAndTenant(warehouseId, tenantId);
+            if (!warehouse) {
+                return ServiceResponse.failure("Warehouse not found", null, StatusCodes.NOT_FOUND);
+            }
+            const updatedWarehouse = await this.warehouseRepository.update(warehouseId, data, tenantId);
+            return ServiceResponse.success<Warehouse>("Warehouse updated successfully", updatedWarehouse, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error updating warehouse:", error);
+            return ServiceResponse.failure<Warehouse | null>("Failed to update warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async deleteWarehouse(warehouseId: string, tenantId: string): Promise<ServiceResponse<null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const warehouse = await this.warehouseRepository.findByIdAndTenant(warehouseId, tenantId);
+            if (!warehouse) {
+                return ServiceResponse.failure("Warehouse not found", null, StatusCodes.NOT_FOUND);
+            }
+            await this.warehouseRepository.delete(warehouseId, tenantId);
+            return ServiceResponse.success<null>("Warehouse deleted successfully", null, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error deleting warehouse:", error);
+            return ServiceResponse.failure<null>("Failed to delete warehouse", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }
