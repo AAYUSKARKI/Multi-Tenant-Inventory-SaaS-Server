@@ -1,6 +1,7 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 import { Role } from "@/generated/prisma/enums";
+import { access } from "fs";
 
 extendZodWithOpenApi(z);
 
@@ -23,6 +24,11 @@ export const TenantByEmailSchema = z.object({
 export const EmailSchema = z.object({
     email: z.email().openapi({ description: "Email address of the user", example: "iJY3J@example.com" }),
 })
+
+export const TokenResponseSchema = z.object({
+    accessToken: z.string().openapi({ description: "Access token", example: "access_token" }),
+})
+
 export const UserWithTenantSchema = UserSchema.extend({ 
      tenant: z.object({
         id: z.string().openapi({ description: "Unique identifier for the tenant", example: "ckxyz1234567890abcdefg" }),
@@ -67,3 +73,5 @@ export type UserResponse = z.infer<typeof UserResponseSchema>;
 export type UserWithTenant = z.infer<typeof UserWithTenantSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
 export type TenantByEmail = z.infer<typeof TenantByEmailSchema>;
+export type Email = z.infer<typeof EmailSchema>;
+export type TokenResponse = z.infer<typeof TokenResponseSchema>;

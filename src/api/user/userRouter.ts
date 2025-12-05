@@ -2,7 +2,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema, UpdateUserSchema, TenantByEmailSchema, EmailSchema } from "./userModel";
+import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema, UpdateUserSchema, TenantByEmailSchema, EmailSchema, TokenResponseSchema } from "./userModel";
 import { userController } from "./userController";
 import { StatusCodes } from "http-status-codes";
 
@@ -167,6 +167,17 @@ userRegistry.registerPath({
 });
 
 userRouter.delete("/user/:id", verifyJWT, userController.deleteUser);
+
+userRegistry.registerPath({
+    method: "post",
+    path: "/api/user/refreshtoken",
+    summary: "Refresh a user's token",
+    tags: ["User"],
+    responses: createApiResponse(TokenResponseSchema, "User token refreshed successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.post("/user/refreshtoken", verifyJWT, userController.refreshToken);
 
 userRegistry.registerPath({
     method: "post",

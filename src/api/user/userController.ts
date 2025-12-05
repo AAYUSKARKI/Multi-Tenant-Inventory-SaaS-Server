@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from "express";
-import { CreateUserSchema,UpdateUserSchema, UserResponse, LoginUserSchema, TenantByEmail } from "./userModel";
+import { CreateUserSchema,UpdateUserSchema, UserResponse, LoginUserSchema, TenantByEmail, TokenResponse } from "./userModel";
 import { userService } from "./userService";
 import { ServiceResponse, handleServiceResponse } from "@/common/utils/serviceResponse";
 import { StatusCodes } from "http-status-codes";
@@ -44,6 +44,31 @@ class UserController {
         const email = req.body.email;
         const serviceResponse: ServiceResponse<TenantByEmail[] | null> = await userService.getTenantByEmail(email);
         return handleServiceResponse(serviceResponse, res);
+    }
+
+    public refreshToken: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        const accessToken = req.headers.authorization?.replace("Bearer ", "").trim();
+        if (!accessToken) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+        try {
+            const serviceResponse: ServiceResponse<TokenResponse | null> = await userService.refreshToken(req.user.id, req.user.tenantId, accessToken);
+            return handleServiceResponse(serviceResponse, res);
+        } catch (error) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
     }
 
     public logoutUser: RequestHandler = async (req: Request, res: Response) => {
