@@ -1,6 +1,8 @@
 import { prisma } from "@/common/lib/prisma";
 import type { CreateUser, UpdateUser } from "./userModel";
 import type { User } from "./userModel";
+import { Jwt } from "jsonwebtoken";
+import cache from "memory-cache";
 
 export class UserRepository {
     async findByEmail(email: string): Promise<User | null> {
