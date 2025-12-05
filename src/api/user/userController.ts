@@ -1,5 +1,5 @@
 import type { Request, RequestHandler, Response } from "express";
-import { CreateUserSchema,UpdateUserSchema, UserResponse, LoginUserSchema } from "./userModel";
+import { CreateUserSchema,UpdateUserSchema, UserResponse, LoginUserSchema, TenantByEmail } from "./userModel";
 import { userService } from "./userService";
 import { ServiceResponse, handleServiceResponse } from "@/common/utils/serviceResponse";
 import { StatusCodes } from "http-status-codes";
@@ -38,7 +38,13 @@ class UserController {
         const userId = req.params.id;
         const serviceResponse: ServiceResponse<UserResponse | null> = await userService.getUserById(userId, req.user.tenantId);
         return handleServiceResponse(serviceResponse, res);
-    };
+    }; 
+    
+    public getTenantByEmail: RequestHandler = async (req: Request, res: Response) => {
+        const email = req.body.email;
+        const serviceResponse: ServiceResponse<TenantByEmail[] | null> = await userService.getTenantByEmail(email);
+        return handleServiceResponse(serviceResponse, res);
+    }
 
     public updateUser: RequestHandler = async (req: Request, res: Response) => {
         if (!req.user?.tenantId) {

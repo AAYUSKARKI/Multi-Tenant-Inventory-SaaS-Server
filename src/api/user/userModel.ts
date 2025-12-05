@@ -15,6 +15,14 @@ export const UserSchema = z.object({
     updatedAt: z.date().openapi({ description: "Timestamp when the user was last updated", example: "2023-10-10T15:30:00Z" }),
 })
 
+export const TenantByEmailSchema = z.object({
+    id: z.string().openapi({ description: "Unique identifier for the tenant", example: "ckxyz1234567890abcdefg" }),
+    name: z.string().openapi({ description: "Name of the tenant", example: "Acme Corporation" }),
+}).openapi("TenantByEmail");
+
+export const EmailSchema = z.object({
+    email: z.email().openapi({ description: "Email address of the user", example: "iJY3J@example.com" }),
+})
 export const UserWithTenantSchema = UserSchema.extend({ 
      tenant: z.object({
         id: z.string().openapi({ description: "Unique identifier for the tenant", example: "ckxyz1234567890abcdefg" }),
@@ -34,7 +42,7 @@ export const UserWithTenantSchema = UserSchema.extend({
 
 export const CreateUserSchema = UserSchema.omit({ id: true, createdAt: true, updatedAt: true }).openapi("CreateUser");
 
-export const LoginUserSchema = UserSchema.pick({ email: true, password: true }).openapi("LoginUser");
+export const LoginUserSchema = UserSchema.pick({ email: true,tenantId: true, password: true }).openapi("LoginUser");
 
 export const UpdateUserSchema = UserSchema.omit({ id: true, tenantId: true, createdAt: true, updatedAt: true }).openapi("UpdateUser");
 
@@ -58,3 +66,4 @@ export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 export type UserWithTenant = z.infer<typeof UserWithTenantSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+export type TenantByEmail = z.infer<typeof TenantByEmailSchema>;

@@ -1,5 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import type { LoginUser,UpdateUser, CreateUser, UserResponse, LoginResponse } from "./userModel";
+import type { LoginUser,UpdateUser, CreateUser, UserResponse, LoginResponse, TenantByEmail } from "./userModel";
 import { UserRepository } from "./userRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import bcrypt from "bcrypt";
@@ -24,7 +24,7 @@ export class UserService {
             if (!tenant) {
                 return ServiceResponse.failure("Tenant not found", null, StatusCodes.BAD_REQUEST);
             }
-            const userExists = await this.userRepository.findByEmail(data.email);
+            const userExists = await this.userRepository.findByEmailOnTenant(data.email, data.tenantId);
             if (userExists) {
                 return ServiceResponse.failure("User with this email already exists", null, StatusCodes.CONFLICT);
             }
@@ -48,7 +48,7 @@ export class UserService {
 
     async loginUser(data: LoginUser): Promise<ServiceResponse<LoginResponse | null>> {
         try {
-            const user = await this.userRepository.findByEmail(data.email);
+            const user = await this.userRepository.findByEmailOnTenant(data.email, data.tenantId);
             if (!user) {
                 return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
             }
@@ -58,6 +58,9 @@ export class UserService {
             }
 
             const token = jwt.sign({ userId: user.id, tenantId: user.tenantId }, process.env.JWT_SECRET as string, { expiresIn: "1h" });
+
+            await this.userRepository.updateRefreshToken(user.id,user.tenantId,token);
+
             const loginResponse: LoginResponse = {
                 token,
                 id: user.id,
@@ -113,6 +116,20 @@ export class UserService {
         } catch (error) {
             console.error("Error retrieving user:", error);
             return ServiceResponse.failure<null>("Failed to retrieve user", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getTenantByEmail(email: string): Promise<ServiceResponse<TenantByEmail[] | null>> {
+        try {
+            const user = await this.userRepository.findTenantByEmail(email);
+            if (!user) {
+                return ServiceResponse.failure("Tenant not found for this email", null, StatusCodes.NOT_FOUND);
+            }
+           
+            return ServiceResponse.success<TenantByEmail[]>("Tenant retrieved successfully for this email", user, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving user:", error);
+            return ServiceResponse.failure<null>("Failed to retrieve tenant for this email", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
