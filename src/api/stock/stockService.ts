@@ -1,4 +1,4 @@
-import type { CreateStock,StockResponse } from "./stockModel";
+import type { CreateStock,StockResponse, UpdateStock } from "./stockModel";
 import { StockRepository } from "./stockRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import { WarehouseRepository } from "../warehouse/warehouseRepository";
@@ -46,6 +46,73 @@ export class StockService {
         } catch (error) {
             console.error("Error creating stock:", error);
             return ServiceResponse.failure<null>("Failed to create stock", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getStocks(tenantId: string): Promise<ServiceResponse<StockResponse[]>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", [], StatusCodes.NOT_FOUND);
+            }
+            const stocks = await this.stockRepository.findAll(tenantId);
+            return ServiceResponse.success<StockResponse[]>("Stocks retrieved successfully", stocks, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving stocks:", error);
+            return ServiceResponse.failure<StockResponse[]>("Failed to retrieve stocks", [], StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    } 
+
+    async getStockById(stockId: string, tenantId: string): Promise<ServiceResponse<StockResponse | null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const stock = await this.stockRepository.findByIdAndTenant(stockId, tenantId);
+            if (!stock) {
+                return ServiceResponse.failure("Stock not found", null, StatusCodes.NOT_FOUND);
+            }
+            return ServiceResponse.success<StockResponse>("Stock retrieved successfully", stock, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving stock:", error);
+            return ServiceResponse.failure<StockResponse | null>("Failed to retrieve stock", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async updateStock(stockId: string, data: UpdateStock, tenantId: string): Promise<ServiceResponse<StockResponse | null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const stock = await this.stockRepository.findByIdAndTenant(stockId, tenantId);
+            if (!stock) {
+                return ServiceResponse.failure("Stock not found", null, StatusCodes.NOT_FOUND);
+            }
+            const updatedStock = await this.stockRepository.update(stockId, data, tenantId);
+            return ServiceResponse.success<StockResponse>("Stock updated successfully", updatedStock, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error updating stock:", error);
+            return ServiceResponse.failure<StockResponse | null>("Failed to update stock", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async deleteStock(stockId: string, tenantId: string): Promise<ServiceResponse<null>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
+            }
+            const stock = await this.stockRepository.findByIdAndTenant(stockId, tenantId);
+            if (!stock) {
+                return ServiceResponse.failure("Stock not found", null, StatusCodes.NOT_FOUND);
+            }
+            await this.stockRepository.delete(stockId, tenantId);
+            return ServiceResponse.success<null>("Stock deleted successfully", null, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error deleting stock:", error);
+            return ServiceResponse.failure<null>("Failed to delete stock", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }
