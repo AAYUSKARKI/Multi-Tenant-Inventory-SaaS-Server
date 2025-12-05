@@ -53,15 +53,9 @@ class UserController {
                 res
             );
         }
-        const accessToken = req.headers.authorization?.replace("Bearer ", "").trim();
-        if (!accessToken) {
-            return handleServiceResponse(
-                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
-                res
-            );
-        }
+        const { refreshToken } = req.body;
         try {
-            const serviceResponse: ServiceResponse<TokenResponse | null> = await userService.refreshToken(req.user.id, req.user.tenantId, accessToken);
+            const serviceResponse: ServiceResponse<TokenResponse | null> = await userService.refreshToken(req.user.id, req.user.tenantId, refreshToken);
             return handleServiceResponse(serviceResponse, res);
         } catch (error) {
             return handleServiceResponse(

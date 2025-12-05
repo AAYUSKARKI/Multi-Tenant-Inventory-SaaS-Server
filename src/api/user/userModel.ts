@@ -1,7 +1,6 @@
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import { z } from "zod";
 import { Role } from "@/generated/prisma/enums";
-import { access } from "fs";
 
 extendZodWithOpenApi(z);
 
@@ -11,6 +10,7 @@ export const UserSchema = z.object({
     email: z.email().openapi({ description: "Email address of the user", example: "iJY3J@example.com" }),
     password: z.string().openapi({ description: "Password of the user", example: "password123" }),
     fullName: z.string().openapi({ description: "Full name of the user", example: "John Doe" }),
+    refreshToken: z.string().optional().nullable().openapi({ description: "Refresh token of the user", example: "refresh_token" }),
     role: z.enum(Role).openapi({ description: "Role of the user", example: "USER" }),
     createdAt: z.date().openapi({ description: "Timestamp when the user was created", example: "2023-10-01T12:00:00Z" }),
     updatedAt: z.date().openapi({ description: "Timestamp when the user was last updated", example: "2023-10-10T15:30:00Z" }),
@@ -27,6 +27,7 @@ export const EmailSchema = z.object({
 
 export const TokenResponseSchema = z.object({
     accessToken: z.string().openapi({ description: "Access token", example: "access_token" }),
+    refreshToken: z.string().openapi({ description: "Refresh token", example: "refresh_token" }),
 })
 
 export const UserWithTenantSchema = UserSchema.extend({ 

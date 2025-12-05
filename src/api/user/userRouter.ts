@@ -173,6 +173,24 @@ userRegistry.registerPath({
     path: "/api/user/refreshtoken",
     summary: "Refresh a user's token",
     tags: ["User"],
+    request: {
+        body: {
+            description: "Refresh token object that needs to be refreshed",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            refreshToken: {
+                                type: "string",
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
     responses: createApiResponse(TokenResponseSchema, "User token refreshed successfully", StatusCodes.OK),
     security: [{ bearerAuth: [] }],
 });

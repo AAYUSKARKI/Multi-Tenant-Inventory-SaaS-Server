@@ -172,17 +172,21 @@ export class UserService {
         }
     }
 
-    async refreshToken(userId: string, tenantId: string, accessToken: string): Promise<ServiceResponse<TokenResponse | null>> {
+    async refreshToken(userId: string, tenantId: string, refreshToken: string): Promise<ServiceResponse<TokenResponse | null>> {
         try {
             const user = await this.userRepository.findByIdAndTenant(userId, tenantId);
             if (!user) {
                 return ServiceResponse.failure("User not found", null, StatusCodes.NOT_FOUND);
             }
-            
-            const decoded = jwt.verify(accessToken, process.env.JWT_SECRET as string) as JwtPayload;
 
-            if (decoded.userId !== user.id || decoded.tenantId !== user.tenantId) {
+            if (user.refreshToken !== refreshToken) {
                 return ServiceResponse.failure("Invalid refresh token", null, StatusCodes.UNAUTHORIZED);
+            }
+
+            const decodedToken = jwt.verify(refreshToken, process.env.JWT_SECRET as string) as JwtPayload;
+
+             if (decodedToken.userId !== user.id || decodedToken.tenantId !== user.tenantId) {
+            return ServiceResponse.failure("Invalid refresh token", null, StatusCodes.UNAUTHORIZED);
             }
 
             const newAccessToken = jwt.sign({ userId: user.id, tenantId: user.tenantId }, process.env.JWT_SECRET as string, { expiresIn: "1h" });
@@ -190,7 +194,7 @@ export class UserService {
 
             await this.userRepository.updateRefreshToken(user.id,user.tenantId,newRefreshToken);
 
-            return ServiceResponse.success<TokenResponse>("Token refreshed successfully", { accessToken: newAccessToken }, StatusCodes.OK);
+            return ServiceResponse.success<TokenResponse>("Token refreshed successfully", { accessToken: newAccessToken, refreshToken: newRefreshToken }, StatusCodes.OK);
         } catch (error) {
             console.error("Error refreshing token:", error);
             return ServiceResponse.failure("Failed to refresh token", null, StatusCodes.INTERNAL_SERVER_ERROR);
