@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { StatusCodes } from "http-status-codes";
 import { ServiceResponse, handleServiceResponse } from "@/common/utils/serviceResponse";
 import { UserRepository } from "@/api/user/userRepository";
+import cache from "memory-cache";
 
 const userRepository = new UserRepository();
 
@@ -39,6 +40,15 @@ export const verifyJWT = async (req: Request, res: Response, next: NextFunction)
     }
 
     const token = authHeader.split(" ")[1];
+
+    const isBlacklistedToken = cache.get(token);
+
+    if (isBlacklistedToken) {
+      return handleServiceResponse(
+        ServiceResponse.failure("Token is blacklisted", null, StatusCodes.UNAUTHORIZED),
+        res
+      );
+    }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as JWTPayload;
 

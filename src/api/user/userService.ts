@@ -5,6 +5,7 @@ import { TenantRepository } from "../tenant/tenantRepository";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { ServiceResponse } from "@/common/utils/serviceResponse";
+import cache from "memory-cache";
 
 export class UserService {
     private userRepository: UserRepository;
@@ -167,6 +168,24 @@ export class UserService {
         } catch (error) {
             console.error("Error deleting user:", error);
             return ServiceResponse.failure<null>("Failed to delete user", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async logoutUser(userId: string, tenantId: string, accessToken: string): Promise<ServiceResponse<null>> {
+        try {
+            await this.userRepository.updateRefreshToken(userId, tenantId, "");  
+
+            const decodedToken = jwt.decode(accessToken) as { exp?: number };
+
+            if (decodedToken?.exp) {
+                const currentTimeInSeconds = Math.floor(Date.now() / 1000);
+                const timeToLive = decodedToken.exp - currentTimeInSeconds;
+                cache.put(accessToken,true, timeToLive * 1000);
+            }
+            return ServiceResponse.success<null>("User logged out successfully", null, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error logging out user:", error);
+            return ServiceResponse.failure<null>("Failed to log out user", null, StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

@@ -167,3 +167,14 @@ userRegistry.registerPath({
 });
 
 userRouter.delete("/user/:id", verifyJWT, userController.deleteUser);
+
+userRegistry.registerPath({
+    method: "post",
+    path: "/api/user/logout",
+    summary: "Log out a user",
+    tags: ["User"],
+    responses: createApiResponse(UserResponseSchema, "User logged out successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.post("/user/logout", verifyJWT, userController.logoutUser);

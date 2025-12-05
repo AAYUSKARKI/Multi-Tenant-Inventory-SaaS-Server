@@ -46,6 +46,27 @@ class UserController {
         return handleServiceResponse(serviceResponse, res);
     }
 
+    public logoutUser: RequestHandler = async (req: Request, res: Response) => {
+        if (!req.user?.tenantId) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+
+        const accessToken = req.headers.authorization?.replace("Bearer ", "").trim();
+
+        if (!accessToken) {
+            return handleServiceResponse(
+                ServiceResponse.failure("Unauthorized", null, StatusCodes.UNAUTHORIZED),
+                res
+            );
+        }
+
+        const serviceResponse: ServiceResponse<null> = await userService.logoutUser(req.user.id, req.user.tenantId, accessToken);
+        return handleServiceResponse(serviceResponse, res);
+    }
+
     public updateUser: RequestHandler = async (req: Request, res: Response) => {
         if (!req.user?.tenantId) {
             return handleServiceResponse(
