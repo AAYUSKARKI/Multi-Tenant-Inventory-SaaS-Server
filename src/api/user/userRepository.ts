@@ -1,10 +1,44 @@
 import { prisma } from "@/common/lib/prisma";
-import type { CreateUser, UpdateUser } from "./userModel";
+import type { CreateUser, TenantByEmail, UpdateUser } from "./userModel";
 import type { User } from "./userModel";
 
 export class UserRepository {
-    async findByEmail(email: string): Promise<User | null> {
-        return prisma.user.findUnique({ where: { email } }); 
+    async findByEmailOnTenant(email: string, tenantId: string): Promise<User | null> {
+        return prisma.user.findUnique({ where: {
+            tenantId_email: {
+                email,
+                tenantId
+            }
+        } }); 
+    }
+
+    async findTenantByEmail(email: string): Promise<TenantByEmail[] | null> {
+        const users = await prisma.user.findMany({
+            where: {
+                email,
+                deletedAt: null
+            },
+            select: {
+                tenant: {
+                    select: {
+                        id: true,
+                        name: true
+                    }
+                }
+            },
+            take: 10,
+            orderBy: {
+                tenant: {
+                    name: 'asc'
+                }
+            }
+        });
+        
+       const tenantByEmail = users.map((user) => ({
+            id: user.tenant.id,
+            name: user.tenant.name
+        }));
+        return tenantByEmail;
     }
 
     async findById(id: string): Promise<User | null> {
@@ -13,6 +47,18 @@ export class UserRepository {
 
     async create(data: CreateUser): Promise<User> {
         return prisma.user.create({ data }); 
+    }
+
+    async updateRefreshToken(userId: string,tenantId: string, refreshToken: string): Promise<void> {
+        await prisma.user.update({
+            where: {
+                id: userId,
+                tenantId
+            },
+            data: {
+                refreshToken
+            }
+        });
     }
 
     async findAll(tenantId: string): Promise<User[]> {

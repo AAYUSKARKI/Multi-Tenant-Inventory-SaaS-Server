@@ -10,9 +10,24 @@ export const UserSchema = z.object({
     email: z.email().openapi({ description: "Email address of the user", example: "iJY3J@example.com" }),
     password: z.string().openapi({ description: "Password of the user", example: "password123" }),
     fullName: z.string().openapi({ description: "Full name of the user", example: "John Doe" }),
+    refreshToken: z.string().optional().nullable().openapi({ description: "Refresh token of the user", example: "refresh_token" }),
     role: z.enum(Role).openapi({ description: "Role of the user", example: "USER" }),
     createdAt: z.date().openapi({ description: "Timestamp when the user was created", example: "2023-10-01T12:00:00Z" }),
     updatedAt: z.date().openapi({ description: "Timestamp when the user was last updated", example: "2023-10-10T15:30:00Z" }),
+})
+
+export const TenantByEmailSchema = z.object({
+    id: z.string().openapi({ description: "Unique identifier for the tenant", example: "ckxyz1234567890abcdefg" }),
+    name: z.string().openapi({ description: "Name of the tenant", example: "Acme Corporation" }),
+}).openapi("TenantByEmail");
+
+export const EmailSchema = z.object({
+    email: z.email().openapi({ description: "Email address of the user", example: "iJY3J@example.com" }),
+})
+
+export const TokenResponseSchema = z.object({
+    accessToken: z.string().openapi({ description: "Access token", example: "access_token" }),
+    refreshToken: z.string().openapi({ description: "Refresh token", example: "refresh_token" }),
 })
 
 export const UserWithTenantSchema = UserSchema.extend({ 
@@ -34,7 +49,7 @@ export const UserWithTenantSchema = UserSchema.extend({
 
 export const CreateUserSchema = UserSchema.omit({ id: true, createdAt: true, updatedAt: true }).openapi("CreateUser");
 
-export const LoginUserSchema = UserSchema.pick({ email: true, password: true }).openapi("LoginUser");
+export const LoginUserSchema = UserSchema.pick({ email: true,tenantId: true, password: true }).openapi("LoginUser");
 
 export const UpdateUserSchema = UserSchema.omit({ id: true, tenantId: true, createdAt: true, updatedAt: true }).openapi("UpdateUser");
 
@@ -58,3 +73,6 @@ export type UpdateUser = z.infer<typeof UpdateUserSchema>;
 export type UserResponse = z.infer<typeof UserResponseSchema>;
 export type UserWithTenant = z.infer<typeof UserWithTenantSchema>;
 export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+export type TenantByEmail = z.infer<typeof TenantByEmailSchema>;
+export type Email = z.infer<typeof EmailSchema>;
+export type TokenResponse = z.infer<typeof TokenResponseSchema>;

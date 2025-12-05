@@ -2,7 +2,7 @@ import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
 import { Router } from "express";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
-import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema, UpdateUserSchema } from "./userModel";
+import { UserResponseSchema, CreateUserSchema, UserSchema, LoginResponseSchema, LoginUserSchema, UpdateUserSchema, TenantByEmailSchema, EmailSchema, TokenResponseSchema } from "./userModel";
 import { userController } from "./userController";
 import { StatusCodes } from "http-status-codes";
 
@@ -37,6 +37,27 @@ userRegistry.registerPath({
 });
 
 userRouter.post("/user", userController.createUser);
+
+userRegistry.registerPath({
+    method: "post",
+    path: "/api/user/tenantbyemail",
+    summary: "Get tenant by email",
+    tags: ["User"],
+    request: {
+        body: {
+            description: "Email of the user to retrieve the tenant",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: EmailSchema,
+                },
+            },
+        },
+    },
+    responses: createApiResponse(TenantByEmailSchema, "Tenant retrieved successfully", StatusCodes.OK),
+});
+
+userRouter.post("/user/tenantbyemail", userController.getTenantByEmail);
 
 userRegistry.registerPath({
     method: "post",
@@ -146,3 +167,43 @@ userRegistry.registerPath({
 });
 
 userRouter.delete("/user/:id", verifyJWT, userController.deleteUser);
+
+userRegistry.registerPath({
+    method: "post",
+    path: "/api/user/refreshtoken",
+    summary: "Refresh a user's token",
+    tags: ["User"],
+    request: {
+        body: {
+            description: "Refresh token object that needs to be refreshed",
+            required: true,
+            content: {
+                "application/json": {
+                    schema: {
+                        type: "object",
+                        properties: {
+                            refreshToken: {
+                                type: "string",
+                            },
+                        },
+                    },
+                },
+            },
+        },
+    },
+    responses: createApiResponse(TokenResponseSchema, "User token refreshed successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.post("/user/refreshtoken", verifyJWT, userController.refreshToken);
+
+userRegistry.registerPath({
+    method: "post",
+    path: "/api/user/logout",
+    summary: "Log out a user",
+    tags: ["User"],
+    responses: createApiResponse(UserResponseSchema, "User logged out successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+userRouter.post("/user/logout", verifyJWT, userController.logoutUser);

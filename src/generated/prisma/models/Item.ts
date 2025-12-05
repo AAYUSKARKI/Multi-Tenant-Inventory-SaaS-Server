@@ -29,8 +29,10 @@ export type ItemMinAggregateOutputType = {
   tenantId: string | null
   name: string | null
   sku: string | null
+  description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ItemMaxAggregateOutputType = {
@@ -38,8 +40,10 @@ export type ItemMaxAggregateOutputType = {
   tenantId: string | null
   name: string | null
   sku: string | null
+  description: string | null
   createdAt: Date | null
   updatedAt: Date | null
+  deletedAt: Date | null
 }
 
 export type ItemCountAggregateOutputType = {
@@ -47,8 +51,10 @@ export type ItemCountAggregateOutputType = {
   tenantId: number
   name: number
   sku: number
+  description: number
   createdAt: number
   updatedAt: number
+  deletedAt: number
   _all: number
 }
 
@@ -58,8 +64,10 @@ export type ItemMinAggregateInputType = {
   tenantId?: true
   name?: true
   sku?: true
+  description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type ItemMaxAggregateInputType = {
@@ -67,8 +75,10 @@ export type ItemMaxAggregateInputType = {
   tenantId?: true
   name?: true
   sku?: true
+  description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
 }
 
 export type ItemCountAggregateInputType = {
@@ -76,8 +86,10 @@ export type ItemCountAggregateInputType = {
   tenantId?: true
   name?: true
   sku?: true
+  description?: true
   createdAt?: true
   updatedAt?: true
+  deletedAt?: true
   _all?: true
 }
 
@@ -158,8 +170,10 @@ export type ItemGroupByOutputType = {
   tenantId: string
   name: string
   sku: string
+  description: string | null
   createdAt: Date
   updatedAt: Date
+  deletedAt: Date | null
   _count: ItemCountAggregateOutputType | null
   _min: ItemMinAggregateOutputType | null
   _max: ItemMaxAggregateOutputType | null
@@ -188,8 +202,10 @@ export type ItemWhereInput = {
   tenantId?: Prisma.StringFilter<"Item"> | string
   name?: Prisma.StringFilter<"Item"> | string
   sku?: Prisma.StringFilter<"Item"> | string
+  description?: Prisma.StringNullableFilter<"Item"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Item"> | Date | string | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   stock?: Prisma.StockMovementListRelationFilter
 }
@@ -199,34 +215,40 @@ export type ItemOrderByWithRelationInput = {
   tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   sku?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   tenant?: Prisma.TenantOrderByWithRelationInput
   stock?: Prisma.StockMovementOrderByRelationAggregateInput
 }
 
 export type ItemWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  sku?: string
   tenantId_sku?: Prisma.ItemTenantIdSkuCompoundUniqueInput
   AND?: Prisma.ItemWhereInput | Prisma.ItemWhereInput[]
   OR?: Prisma.ItemWhereInput[]
   NOT?: Prisma.ItemWhereInput | Prisma.ItemWhereInput[]
   tenantId?: Prisma.StringFilter<"Item"> | string
   name?: Prisma.StringFilter<"Item"> | string
+  sku?: Prisma.StringFilter<"Item"> | string
+  description?: Prisma.StringNullableFilter<"Item"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Item"> | Date | string | null
   tenant?: Prisma.XOR<Prisma.TenantScalarRelationFilter, Prisma.TenantWhereInput>
   stock?: Prisma.StockMovementListRelationFilter
-}, "id" | "sku" | "tenantId_sku">
+}, "id" | "tenantId_sku">
 
 export type ItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   sku?: Prisma.SortOrder
+  description?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ItemCountOrderByAggregateInput
   _max?: Prisma.ItemMaxOrderByAggregateInput
   _min?: Prisma.ItemMinOrderByAggregateInput
@@ -240,16 +262,20 @@ export type ItemScalarWhereWithAggregatesInput = {
   tenantId?: Prisma.StringWithAggregatesFilter<"Item"> | string
   name?: Prisma.StringWithAggregatesFilter<"Item"> | string
   sku?: Prisma.StringWithAggregatesFilter<"Item"> | string
+  description?: Prisma.StringNullableWithAggregatesFilter<"Item"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Item"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Item"> | Date | string | null
 }
 
 export type ItemCreateInput = {
   id?: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   tenant: Prisma.TenantCreateNestedOneWithoutItemsInput
   stock?: Prisma.StockMovementCreateNestedManyWithoutItemInput
 }
@@ -259,8 +285,10 @@ export type ItemUncheckedCreateInput = {
   tenantId: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stock?: Prisma.StockMovementUncheckedCreateNestedManyWithoutItemInput
 }
 
@@ -268,8 +296,10 @@ export type ItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutItemsNestedInput
   stock?: Prisma.StockMovementUpdateManyWithoutItemNestedInput
 }
@@ -279,8 +309,10 @@ export type ItemUncheckedUpdateInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stock?: Prisma.StockMovementUncheckedUpdateManyWithoutItemNestedInput
 }
 
@@ -289,16 +321,20 @@ export type ItemCreateManyInput = {
   tenantId: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ItemUncheckedUpdateManyInput = {
@@ -306,8 +342,10 @@ export type ItemUncheckedUpdateManyInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ItemListRelationFilter = {
@@ -330,8 +368,10 @@ export type ItemCountOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   sku?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ItemMaxOrderByAggregateInput = {
@@ -339,8 +379,10 @@ export type ItemMaxOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   sku?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ItemMinOrderByAggregateInput = {
@@ -348,8 +390,10 @@ export type ItemMinOrderByAggregateInput = {
   tenantId?: Prisma.SortOrder
   name?: Prisma.SortOrder
   sku?: Prisma.SortOrder
+  description?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
+  deletedAt?: Prisma.SortOrder
 }
 
 export type ItemScalarRelationFilter = {
@@ -417,8 +461,10 @@ export type ItemCreateWithoutTenantInput = {
   id?: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stock?: Prisma.StockMovementCreateNestedManyWithoutItemInput
 }
 
@@ -426,8 +472,10 @@ export type ItemUncheckedCreateWithoutTenantInput = {
   id?: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   stock?: Prisma.StockMovementUncheckedCreateNestedManyWithoutItemInput
 }
 
@@ -465,16 +513,20 @@ export type ItemScalarWhereInput = {
   tenantId?: Prisma.StringFilter<"Item"> | string
   name?: Prisma.StringFilter<"Item"> | string
   sku?: Prisma.StringFilter<"Item"> | string
+  description?: Prisma.StringNullableFilter<"Item"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Item"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Item"> | Date | string
+  deletedAt?: Prisma.DateTimeNullableFilter<"Item"> | Date | string | null
 }
 
 export type ItemCreateWithoutStockInput = {
   id?: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
   tenant: Prisma.TenantCreateNestedOneWithoutItemsInput
 }
 
@@ -483,8 +535,10 @@ export type ItemUncheckedCreateWithoutStockInput = {
   tenantId: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ItemCreateOrConnectWithoutStockInput = {
@@ -507,8 +561,10 @@ export type ItemUpdateWithoutStockInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   tenant?: Prisma.TenantUpdateOneRequiredWithoutItemsNestedInput
 }
 
@@ -517,24 +573,30 @@ export type ItemUncheckedUpdateWithoutStockInput = {
   tenantId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type ItemCreateManyTenantInput = {
   id?: string
   name: string
   sku: string
+  description?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  deletedAt?: Date | string | null
 }
 
 export type ItemUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stock?: Prisma.StockMovementUpdateManyWithoutItemNestedInput
 }
 
@@ -542,8 +604,10 @@ export type ItemUncheckedUpdateWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   stock?: Prisma.StockMovementUncheckedUpdateManyWithoutItemNestedInput
 }
 
@@ -551,8 +615,10 @@ export type ItemUncheckedUpdateManyWithoutTenantInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   sku?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -591,8 +657,10 @@ export type ItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   tenantId?: boolean
   name?: boolean
   sku?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   stock?: boolean | Prisma.Item$stockArgs<ExtArgs>
   _count?: boolean | Prisma.ItemCountOutputTypeDefaultArgs<ExtArgs>
@@ -603,8 +671,10 @@ export type ItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   tenantId?: boolean
   name?: boolean
   sku?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["item"]>
 
@@ -613,8 +683,10 @@ export type ItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   tenantId?: boolean
   name?: boolean
   sku?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["item"]>
 
@@ -623,11 +695,13 @@ export type ItemSelectScalar = {
   tenantId?: boolean
   name?: boolean
   sku?: boolean
+  description?: boolean
   createdAt?: boolean
   updatedAt?: boolean
+  deletedAt?: boolean
 }
 
-export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "sku" | "createdAt" | "updatedAt", ExtArgs["result"]["item"]>
+export type ItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "tenantId" | "name" | "sku" | "description" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["item"]>
 export type ItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   tenant?: boolean | Prisma.TenantDefaultArgs<ExtArgs>
   stock?: boolean | Prisma.Item$stockArgs<ExtArgs>
@@ -651,8 +725,10 @@ export type $ItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     tenantId: string
     name: string
     sku: string
+    description: string | null
     createdAt: Date
     updatedAt: Date
+    deletedAt: Date | null
   }, ExtArgs["result"]["item"]>
   composites: {}
 }
@@ -1082,8 +1158,10 @@ export interface ItemFieldRefs {
   readonly tenantId: Prisma.FieldRef<"Item", 'String'>
   readonly name: Prisma.FieldRef<"Item", 'String'>
   readonly sku: Prisma.FieldRef<"Item", 'String'>
+  readonly description: Prisma.FieldRef<"Item", 'String'>
   readonly createdAt: Prisma.FieldRef<"Item", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Item", 'DateTime'>
+  readonly deletedAt: Prisma.FieldRef<"Item", 'DateTime'>
 }
     
 
