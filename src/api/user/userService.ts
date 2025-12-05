@@ -58,12 +58,13 @@ export class UserService {
                 return ServiceResponse.failure("Invalid password", null, StatusCodes.UNAUTHORIZED);
             }
 
-            const token = jwt.sign({ userId: user.id, tenantId: user.tenantId }, process.env.JWT_SECRET as string, { expiresIn: "1h" });
+            const refreshToken = jwt.sign({ userId: user.id, tenantId: user.tenantId }, process.env.JWT_SECRET as string, { expiresIn: "15d" });
+            const accessToken = jwt.sign({ userId: user.id, tenantId: user.tenantId }, process.env.JWT_SECRET as string, { expiresIn: "1h" });
 
-            await this.userRepository.updateRefreshToken(user.id,user.tenantId,token);
+            await this.userRepository.updateRefreshToken(user.id,user.tenantId,refreshToken);
 
             const loginResponse: LoginResponse = {
-                token,
+                token: accessToken,
                 id: user.id,
                 tenantId: user.tenantId,
                 email: user.email,
