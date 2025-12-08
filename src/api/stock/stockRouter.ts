@@ -3,7 +3,7 @@ import { Router } from "express";
 import { createApiResponse } from "@/api-docs/openAPIResponseBuilders";
 import { verifyJWT } from "@/common/middleware/verifyJWT";
 import { stockController } from "./stockController";
-import { CreateStockSchema, StockResponseSchema, StockSchema, UpdateStockSchema } from "./stockModel";
+import { CreateStockSchema, StockResponseSchema, StockSchema, UpdateStockSchema, StockBalanceResponseSchema, StockQueryParamsSchema } from "./stockModel";
 import { StatusCodes } from "http-status-codes";
 
 export const stockRegistry = new OpenAPIRegistry();
@@ -49,6 +49,20 @@ stockRegistry.registerPath({
 });
 
 stockRouter.get("/stock", verifyJWT, stockController.getStocks);
+
+stockRegistry.registerPath({
+    method: "get",
+    path: "/api/stock/balance",
+    summary: "Get stock balance",
+    tags: ["Stock"],
+    request: {
+        query: StockQueryParamsSchema
+    },
+    responses: createApiResponse(StockBalanceResponseSchema, "Stock balance retrieved successfully", StatusCodes.OK),
+    security: [{ bearerAuth: [] }],
+});
+
+stockRouter.get("/stock/balance", verifyJWT, stockController.getStockBalance);
 
 stockRegistry.registerPath({
     method: "get",

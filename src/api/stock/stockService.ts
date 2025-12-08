@@ -1,4 +1,4 @@
-import type { CreateStock,StockResponse, UpdateStock } from "./stockModel";
+import type { CreateStock,StockBalanceResponse,StockQueryParams,StockResponse, UpdateStock } from "./stockModel";
 import { StockRepository } from "./stockRepository";
 import { TenantRepository } from "../tenant/tenantRepository";
 import { WarehouseRepository } from "../warehouse/warehouseRepository";
@@ -26,17 +26,18 @@ export class StockService {
 
     async createStock(data: CreateStock, tenantId: string): Promise<ServiceResponse<StockResponse | null>> {
         try {
-            const tenant = await this.tenantRepository.findById(tenantId);
+            const [tenant, warehouse, item] = await Promise.all([
+                this.tenantRepository.findById(tenantId),
+                this.warehouseRepository.findByIdAndTenant(data.warehouseId, tenantId),
+                this.itemRepository.findByIdAndTenant(data.itemId, tenantId),
+            ])
+            
             if (!tenant) {
                 return ServiceResponse.failure("Tenant not found", null, StatusCodes.NOT_FOUND);
             }
-            
-            const warehouse = await this.warehouseRepository.findByIdAndTenant(data.warehouseId, tenantId);
             if (!warehouse) {
                 return ServiceResponse.failure("Warehouse not found", null, StatusCodes.NOT_FOUND);
             }
-
-            const item = await this.itemRepository.findByIdAndTenant(data.itemId, tenantId);
             if (!item) {
                 return ServiceResponse.failure("Item not found", null, StatusCodes.NOT_FOUND);
             }
@@ -77,6 +78,20 @@ export class StockService {
         } catch (error) {
             console.error("Error retrieving stock:", error);
             return ServiceResponse.failure<StockResponse | null>("Failed to retrieve stock", null, StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getStockBalance(params: StockQueryParams, tenantId: string): Promise<ServiceResponse<StockBalanceResponse[]>> {
+        try {
+            const tenant = await this.tenantRepository.findById(tenantId);
+            if (!tenant) {
+                return ServiceResponse.failure("Tenant not found", [], StatusCodes.NOT_FOUND);
+            }
+            const stocks = await this.stockRepository.getStockBalance(params, tenantId);
+            return ServiceResponse.success<StockBalanceResponse[]>("Stocks retrieved successfully", stocks, StatusCodes.OK);
+        } catch (error) {
+            console.error("Error retrieving stocks:", error);
+            return ServiceResponse.failure<StockBalanceResponse[]>("Failed to retrieve stocks", [], StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
